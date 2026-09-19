@@ -352,6 +352,12 @@
       </div>
 
       <div class="card mine-card">
+        <div class="mine-row" style="border:none;padding-bottom:4px"><div class="t">源码与部署</div></div>
+        <div class="d" style="font-size:13px;color:var(--muted)">开源在 GitHub：单文件 HTML，可直接部署到 GitHub Pages 自己用，数据存浏览器本地。</div>
+        <div style="margin-top:10px"><button class="btn gray sm" data-act="open-src">在 GitHub 查看源码</button></div>
+      </div>
+
+      <div class="card mine-card">
         <div class="mine-row" style="border:none;padding-bottom:6px"><div class="t">添加到手机主屏幕</div></div>
         <ul class="steps">
           <li><b>iPhone / iPad：</b>用 Safari 打开本页 → 点底部「分享」图标 → 选「添加到主屏幕」→ 命名后点「添加」。</li>
@@ -527,16 +533,16 @@
     if(ONLINE) return;
     if(localStorage.getItem(LSKEY.seeded)==="1") return;
     var t=todayLocal(); var gs=[], cs=[];
-    gs.push({ _id:"seed_a", "名称":"背英语单词", "单位":"个", "总量":2500, "截止日":ymd(addDays(t,170)),
+    gs.push({ _id:"seed_a", "名称":"背考研词汇", "单位":"个", "总量":5500, "截止日":ymd(addDays(t,200)),
       "配色":"#7C5CFC", "障碍":"想刷手机", "对策":"把资料放在手机首屏" });
-    gs.push({ _id:"seed_b", "名称":"读《人类简史》", "单位":"页", "总量":440, "截止日":ymd(addDays(t,80)),
+    gs.push({ _id:"seed_b", "名称":"刷考研数学真题", "单位":"套", "总量":20, "截止日":ymd(addDays(t,150)),
       "配色":"#23B26B", "障碍":"晚上太累", "对策":"睡前先做最小量" });
-    gs.push({ _id:"seed_c", "名称":"Python 入门课", "单位":"节", "总量":40, "截止日":ymd(addDays(t,-3)),
+    gs.push({ _id:"seed_c", "名称":"考研政治背诵", "单位":"条", "总量":200, "截止日":ymd(addDays(t,-3)),
       "配色":"#F2A413", "障碍":"时间太碎", "对策":"按 10 分钟切一份" });
 
-    var patA=[14,12,null,16,15,18,11,14,null,null];   // 9 天前 → 今天；今天留空等你来打
-    var patB=[6,5,8,null,7,6,9,5,6];
-    var patC=[2,1,2,2,1,2,2,1,2,2,1,2,2,1];
+    var patA=[28,30,null,32,27,33,29,null,31,30,34,null];   // 背词：含一次休息日、今天待打卡
+    var patB=[1,null,1,1,0,1,null,1,1,0,1,null];            // 数学套卷：每周约 1 套
+    var patC=[1,2,1,null,2,1,2,1,null,2,1,2];               // 政治背诵：今天已做、已逾期
     function push(gid,pat,minutes,back){
       for(var i=0;i<pat.length;i++){
         var v=pat[i];
@@ -546,10 +552,17 @@
       }
     }
     push("seed_a",patA,25,true);
-    push("seed_b",patB,30,false);
+    push("seed_b",patB,45,false);
     push("seed_c",patC,60,false);
 
-    lsSet(LSKEY.goals,gs); lsSet(LSKEY.checkins,cs); lsSet(LSKEY.weekly,[]);
+    var mon=ymd(weekStart(t));
+    var wk=[{ _id:"seed_wk", "周":mon, "周开始日":mon, "投入量":96, "打卡天数":6, "分钟数":410,
+      "保持":"单词每天稳定推进、数学套卷节奏保持得不错",
+      "问题":"政治背诵容易拖到晚上、周末容易掉链子",
+      "尝试":"政治改到早晨通勤时背、周末按工作日半量做",
+      "预案":"下周把政治设成早起第一件事、睡前只做最小量" }];
+
+    lsSet(LSKEY.goals,gs); lsSet(LSKEY.checkins,cs); lsSet(LSKEY.weekly,wk);
     try{ localStorage.setItem(LSKEY.seeded,"1"); }catch(e){}
   }
 
@@ -1179,6 +1192,7 @@
     else if(act==="clear-all"){ confirmClear(false); }
     else if(act==="export-json"){ exportBackup(); }
     else if(act==="import-json"){ pickImport(); }
+    else if(act==="open-src"){ try{ window.open("https://github.com/Wadesha/learning-goal-workbench","_blank"); }catch(e){} }
     else if(act==="gen-weekly"){ genWeeklyText(); }
     else if(act==="change-week"){ fourDirty=false; curWeekMon=parseYmd($("weekSel").value); renderWeekBody(curWeekMon); }
     else if(act==="wk-chip"){ toggleFourChip(elmt.getAttribute("data-k"), Number(elmt.getAttribute("data-i"))); }
